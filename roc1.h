@@ -7,7 +7,9 @@
 
 #include <TCanvas.h>
 
-int process_event (Event *e); //++CINT 
+int process_event (Event *e); //++CINT
+void set_packetid(const int /*id*/);
+
 void  plot(const int start = 0, const int xx=5, const int yy=0);
 
 TCanvas * get_Canvas();

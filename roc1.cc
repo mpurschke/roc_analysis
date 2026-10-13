@@ -20,8 +20,13 @@ TCanvas *c = 0;
 TH2F *h_wf[nr_channels] = {0};   // the uncorrected waveform
 TH2F *h_wf_bl[nr_channels] = {0};  // and baseline_subtracted
 
-const int h_samples=31;
+const int h_samples=7;
+int packet_id = 15001;
 
+void set_packetid(const int id)
+{
+  packet_id = id;
+}
 
 int pinit()
 {
@@ -83,13 +88,13 @@ int process_event (Event * e)
 
   int baseline[nr_channels] = {0};
 
-  Packet *p = e->getPacket(12001);
+  Packet *p = e->getPacket(packet_id);
   if (p)
     {
 
       // first we find out how many waveforms we have here
       int wf = p->iValue(0, "NR_WF");
-      //cout  << " Number of Waveforms: " << e << endl;
+      //cout  << " Number of Waveforms: " << wf << endl;
 
       // now we run through them
       for ( int n = 0; n < wf; n++)
@@ -100,7 +105,7 @@ int process_event (Event * e)
 	  // how many samples does this wf have?
 	  int nr_samples = p->iValue(n,"SAMPLESIZE");
 	  
-	  if ( nr_samples >10)   // some minimum size
+	  if ( nr_samples >1)   // was 10, so killed all waveforms
 	    {
 
 	      for ( int ch = 0; ch < nr_channels; ch++)
@@ -109,7 +114,7 @@ int process_event (Event * e)
 		  // calulate the baseline as the average of the first three samples, leaving out sample 0
 		  baseline[ch] = 0;
 		  float count = 0;
-		  for ( int s = 1; s < 4; s++)
+		  for ( int s = 0; s < 2; s++)
 		    {
 		      baseline[ch] +=  p->iValue(n, s, ch);
 		      count +=1. ;
